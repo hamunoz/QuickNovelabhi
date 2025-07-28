@@ -72,6 +72,7 @@ import com.lagradost.quicknovel.util.UIHelper.setImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
+import java.io.File
 import java.lang.ref.WeakReference
 import kotlin.concurrent.thread
 import kotlin.reflect.KClass
@@ -84,6 +85,9 @@ class MainActivity : AppCompatActivity() {
             private set(value) {
                 _mainActivity = WeakReference(value)
             }
+        val filesDirSafe: File
+            get() = _mainActivity?.get()?.filesDir
+                ?: throw IllegalStateException("MainActivity not initialized yet")
 
         fun loadPreviewPage(searchResponse: SearchResponse) {
             mainActivity?.loadPopup(searchResponse.url, searchResponse.apiName)

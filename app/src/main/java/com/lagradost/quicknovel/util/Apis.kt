@@ -18,6 +18,7 @@ import com.lagradost.quicknovel.providers.HiraethTranslationProvider
 import com.lagradost.quicknovel.providers.IndoWebNovelProvider
 import com.lagradost.quicknovel.providers.KolNovelProvider
 import com.lagradost.quicknovel.providers.LibReadProvider
+import com.lagradost.quicknovel.providers.MVLEmpyrProvider
 import com.lagradost.quicknovel.providers.MeioNovelProvider
 import com.lagradost.quicknovel.providers.MoreNovelProvider
 import com.lagradost.quicknovel.providers.MtlNovelProvider
@@ -77,7 +78,8 @@ class Apis {
             SakuraNovelProvider(), // cloudflare?
             // WattpadProvider(), // they have randomized the css classes
             WtrLabProvider(),
-            PawReadProver()
+            PawReadProver(),
+            MVLEmpyrProvider()
         ).sortedBy { it.name }
 
         fun getApiFromName(name: String): APIRepository {
