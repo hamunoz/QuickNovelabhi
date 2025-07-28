@@ -1,6 +1,7 @@
 package com.lagradost.quicknovel
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.content.res.Configuration
@@ -79,6 +80,7 @@ import kotlin.reflect.KClass
 
 class MainActivity : AppCompatActivity() {
     companion object {
+
         private var _mainActivity: WeakReference<MainActivity>? = null
         private var mainActivity
             get() = _mainActivity?.get()
@@ -131,6 +133,7 @@ class MainActivity : AppCompatActivity() {
         ).apply {
             defaultHeaders = mapOf("user-agent" to USER_AGENT)
         }
+        lateinit var context: Context
 
         // === API ===
         lateinit var navOptions: NavOptions
@@ -440,6 +443,9 @@ class MainActivity : AppCompatActivity() {
         CommonActivity.init(this)
 
         super.onCreate(savedInstanceState)
+
+        context = applicationContext // ✅ Safe!
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
 

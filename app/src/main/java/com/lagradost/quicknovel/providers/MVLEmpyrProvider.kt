@@ -179,15 +179,24 @@ class MVLEmpyrProvider : MainAPI() {
     override suspend fun search(query: String): List<SearchResponse> {
         Log.d("MVLEmpyrProvider", "Searching for: $query")
 
-        // Ensure fullNovelList is loaded
-        if (fullNovelList.isEmpty()) {
-            Log.d("MVLEmpyrProvider", "Fetching all novels from API for search")
-            val response = app.get(apiUrl+"per_page=10000").body.string()
-            fullNovelList = parseJsonArray(response)
-        }
+        ensureFullNovelListLoaded()
 
-        val filteredItems = fullNovelList.filter {
-            (it["name"] as? String)?.contains(query, ignoreCase = true) == true
+        val filteredItems = fullNovelList.filter { item ->
+            val queryLower = query.lowercase()
+
+            val name = (item["name"] as? String)?.lowercase() ?: ""
+            val author = (item["author-name"] as? String)?.lowercase() ?: ""
+            val tags = (item["tags"] as? List<*>)?.joinToString(" ")?.lowercase() ?: ""
+            val genres = (item["genre"] as? List<*>)?.joinToString(" ")?.lowercase() ?: ""
+            val synopsis = (item["synopsis-text"] as? String)?.lowercase() ?: ""
+            val associatedNames = (item["associated-names"] as? String)?.lowercase() ?: ""
+
+            name.contains(queryLower) ||
+                    author.contains(queryLower) ||
+                    tags.contains(queryLower) ||
+                    genres.contains(queryLower) ||
+                    synopsis.contains(queryLower) ||
+                    associatedNames.contains(queryLower)
         }
 
         return filteredItems.mapNotNull { item ->
