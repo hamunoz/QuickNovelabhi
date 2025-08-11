@@ -129,10 +129,12 @@ class MVLEmpyrProvider : MainAPI() {
             fullNovelList = loadFullNovelListCache()
         } else {
             Log.d("MVLEmpyrProvider", "Fetching fullNovelList from API")
-            val response = app.get("${apiUrl}per_page=10000").body.string()
+            Log.d("MVLEmpyrProvider", "${apiUrl}per_page=10000")
+            val response = app.get("${apiUrl}per_page=10000", timeout = 60).body.string()
             fullNovelList = parseJsonArray(response)
             saveFullNovelListCache(fullNovelList)
         }
+        Log.d("MVLEmpyrProvider","${fullNovelList.size}")
     }
 
 
@@ -166,9 +168,11 @@ class MVLEmpyrProvider : MainAPI() {
             val slug = item["slug"] as? String ?: return@mapNotNull null
             val novelCode = (item["novel-code"] as? Number)?.toInt() ?: return@mapNotNull null
             val coverUrl = "https://assets.mvlempyr.app/images/300/${novelCode}.webp"
+            val chapterCount=item["total-chapters"].toString()
 
             newSearchResponse(name, fixUrlNull("/novel/$slug") ?: return@mapNotNull null) {
-                posterUrl = coverUrl
+                posterUrl = coverUrl;
+                totalChapterCount=chapterCount
             }
         }
 
@@ -204,13 +208,15 @@ class MVLEmpyrProvider : MainAPI() {
             val slug = item["slug"] as? String ?: return@mapNotNull null
             val novelCode = (item["novel-code"] as? Number)?.toInt() ?: return@mapNotNull null
             val coverUrl = "https://assets.mvlempyr.app/images/300/${novelCode}.webp"
+            val chapterCount=item["total-chapters"].toString()
 
             Log.d("MVLEmpyrProvider", "Search Result: name=$name, slug=$slug")
 
             val url = fixUrlNull("/novel/$slug") ?: return@mapNotNull null
             newSearchResponse(name, url) {
                 this.posterUrl = coverUrl
-                this.latestChapter = item["total-chapters"]?.toString()
+                this.latestChapter = chapterCount
+                this.totalChapterCount=chapterCount
             }
         }
     }

@@ -8,6 +8,7 @@ import com.lagradost.quicknovel.MainActivity.Companion.app
 import com.lagradost.quicknovel.mvvm.logError
 import com.lagradost.quicknovel.ui.UiImage
 import com.lagradost.quicknovel.ui.img
+import io.reactivex.internal.operators.maybe.MaybeCount
 import kotlinx.coroutines.sync.Mutex
 import org.jsoup.Jsoup
 
@@ -180,7 +181,8 @@ data class SearchResponse(
     var rating: Int? = null,
     var latestChapter: String? = null,
     val apiName: String,
-    var posterHeaders: Map<String, String>? = null
+    var posterHeaders: Map<String, String>? = null,
+    var totalChapterCount:String? = null
 ) {
     val image get() = img(posterUrl, posterHeaders)
 }
@@ -189,10 +191,11 @@ fun MainAPI.newSearchResponse(
     name: String,
     url: String,
     fix: Boolean = true,
+    chapterCount: String? = null,
     initializer: SearchResponse.() -> Unit = { },
 ): SearchResponse {
     val builder =
-        SearchResponse(name = name, url = if (fix) fixUrl(url) else url, apiName = this.name)
+        SearchResponse(name = name, url = if (fix) fixUrl(url) else url, apiName = this.name, totalChapterCount = chapterCount)
     builder.initializer()
 
     return builder

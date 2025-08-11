@@ -91,6 +91,16 @@ class MainAdapter2(
             }
 
             imageText.text = item.name
+
+            // Only show chapter count overlay if it's not null and greater than 0
+            val chapterCount = item.totalChapterCount?.toIntOrNull()
+
+            if (chapterCount != null && chapterCount > 0) {
+                chapterCountOverlay.isVisible = true
+                chapterCountOverlay.text = "$chapterCount ch"
+            } else {
+                chapterCountOverlay.isVisible = false
+            }
         }
     }
 

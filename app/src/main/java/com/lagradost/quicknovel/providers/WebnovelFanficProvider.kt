@@ -57,9 +57,10 @@ class WebnovelFanficProvider : MainAPI() {
         ensureCookiesLoaded()
 
 
-        val slug = tag ?: "fanfic-anime-comics"
+        val slug = tag ?: "fanfic"
         val categoryId = getCategoryIdFromTag(slug)
-        val apiUrl = "$mainUrl/go/pcm/category/categoryPage?_csrfToken=$cachedCsrfToken&language=en&categoryId=$categoryId&categoryType=4&orderBy=3&pageIndex=$page"
+        var apiUrl = "$mainUrl/go/pcm/category/categoryPage?_csrfToken=$cachedCsrfToken&language=en&categoryId=$categoryId&categoryType=4&orderBy=3&pageIndex=$page"
+
 
         val client = OkHttpClient()
         //val cookies = "_csrfToken=$csrfToken; webnovel-language=en; webnovel-content-language=en"
@@ -73,31 +74,33 @@ class WebnovelFanficProvider : MainAPI() {
         val response = client.newCall(request).execute()
         val body = response.body?.string() ?: throw ErrorLoadingException("Empty response")
 
+        Log.d(" URL","${apiUrl}")
+        Log.d(" Result","${body}")
 
         val json = JSONObject(body)
-        val categoryItems = json
-            .getJSONObject("data")
-            .getJSONArray("items")
-
-
         val results = mutableListOf<SearchResponse>()
 
+        var ItemLIst=json.getJSONObject("data").getJSONArray("items")
 
+        if(ItemLIst.length() >0){
+            for (i in 0 until ItemLIst.length()) {
 
-        for (i in 0 until categoryItems.length()) {
+                val book = ItemLIst.getJSONObject(i)
 
-            val book = categoryItems.getJSONObject(i)
+                val id = book.optString("bookId") ?: continue
+                val title = book.optString("bookName", "Untitled") // fallback title)
+                val cover = "https://book-pic.webnovel.com/bookcover/$id?imageMogr2/thumbnail/180x|imageMogr2/format/webp|imageMogr2/quality/70!"
 
-            val id = book.optString("bookId") ?: continue
-            val title = book.optString("bookName", "Untitled") // fallback title)
-            val cover = "https://book-pic.webnovel.com/bookcover/$id?imageMogr2/thumbnail/180x|imageMogr2/format/webp|imageMogr2/quality/70!"
+                val link = fixUrlNull("$mainUrl/book/$id")
+                val chapterCount=book.optString("chapterNum","0")
 
-            val link = fixUrlNull("$mainUrl/book/$id")
-
-            results.add(newSearchResponse(title, link ?: continue) {
-                this.posterUrl = cover
-            })
+                results.add(newSearchResponse(title, link ?: continue) {
+                    this.posterUrl = cover;
+                    this.totalChapterCount=chapterCount
+                })
+            }
         }
+
 
         return HeadMainPageResponse(apiUrl, results)
     }
@@ -135,6 +138,9 @@ class WebnovelFanficProvider : MainAPI() {
         val response = OkHttpClient().newCall(request).execute()
         val body = response.body?.string() ?: return Pair(emptyList(), true)
 
+        Log.d("Search URL","${url}")
+        Log.d("Search Result","${body}")
+
         val json = JSONObject(body)
         val data = json.optJSONObject("data") ?: return Pair(emptyList(), true)
         val fanficData = data.optJSONObject("fanficBookInfo") ?: return Pair(emptyList(), true)
@@ -147,9 +153,11 @@ class WebnovelFanficProvider : MainAPI() {
             val title = book.optString("bookName", "Untitled")
             val cover = "https://book-pic.webnovel.com/bookcover/$id?imageMogr2/thumbnail/180x|imageMogr2/format/webp|imageMogr2/quality/70!"
             val link = "$mainUrl/book/$id"
+            val chapterCount=book.optString("chapterNum","0")
 
             results.add(newSearchResponse(title, fixUrl(link)) {
-                this.posterUrl = cover
+                this.posterUrl = cover;
+                this.totalChapterCount=chapterCount
             })
         }
 
@@ -171,6 +179,7 @@ class WebnovelFanficProvider : MainAPI() {
             .addHeader("User-Agent", MOBILE_USER_AGENT)
             .addHeader("Cookie", cachedCookies!!)
             .build()
+        Log.d("WebNovel","${detailUrl}")
 
         val client = OkHttpClient()
         val infoResponse = client.newCall(infoRequest).execute()
@@ -191,7 +200,7 @@ class WebnovelFanficProvider : MainAPI() {
         }
 
         // ✅ Scrape chapter list from mobile catalog page
-        val catalogUrl = "https://m.webnovel.com/book/$bookId/catalog"
+        val catalogUrl = "$mainUrl/book/$bookId/catalog"
         val catalogRequest = Request.Builder()
             .url(catalogUrl)
             .addHeader("User-Agent", MOBILE_USER_AGENT)
@@ -259,13 +268,13 @@ class WebnovelFanficProvider : MainAPI() {
         return when (tag) {
             "fanfic-anime-comics" -> "81006"
             "fanfic-video-games" -> "81005"
-            "fanfic-celebrities" -> "81007"
-            "fanfic-music-bands" -> "81008"
-            "fanfic-movies" -> "81009"
-            "fanfic-book-literature" -> "81010"
-            "fanfic-tv" -> "81011"
-            "fanfic-theater" -> "81012"
-            "fanfic-others" -> "81013"
+            "fanfic-celebrities" -> "81002"
+            "fanfic-music-bands" -> "81003"
+            "fanfic-movies" -> "81007"
+            "fanfic-book-literature" -> "81001"
+            "fanfic-tv" -> "81008"
+            "fanfic-theater" -> "81004"
+            "fanfic-others" -> "81009"
             else -> "81006"
         }
     }
