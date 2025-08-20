@@ -1,0 +1,103 @@
+package com.lagradost.quicknovel
+
+import android.content.Context
+import android.hardware.biometrics.BiometricManager.Strings
+import android.util.Log
+import com.lagradost.quicknovel.DataStore.getKey
+import com.lagradost.quicknovel.DataStore.getKeys
+import com.lagradost.quicknovel.ui.ReadType
+import com.lagradost.quicknovel.util.ResultCached
+
+object LibraryHelper {
+
+    var libraryData: Map<String, List<ResultCached>> = emptyMap()
+
+    fun Context.setLibraryBooks() {
+        val result = mutableMapOf<String, List<ResultCached>>()
+
+        Log.d("LIBRARY_DEBUG", "Fetching library books...")
+
+
+
+        // 3. Bookmarks grouped by ReadType
+        val bookmarkStateKeys = getKeys(RESULT_BOOKMARK_STATE)
+        val mapping = mutableMapOf<ReadType, MutableList<ResultCached>>()
+        for (read in ReadType.values()) {
+            if (read != ReadType.NONE) {
+                mapping[read] = mutableListOf()
+            }
+        }
+
+        for (key in bookmarkStateKeys) {
+            val typeValue = getKey<Int>(key) ?: continue
+            val type = ReadType.values().find { it.prefValue == typeValue } ?: continue
+            val bookKey = key.replaceFirst(RESULT_BOOKMARK_STATE, RESULT_BOOKMARK)
+            val book = getKey<ResultCached>(bookKey) ?: continue
+            mapping[type]?.add(book)
+        }
+
+        mapping.forEach { (readType, books) ->
+            Log.d("LIBRARY_DEBUG", "${readType.name}: ${books.size} books")
+            result[readType.name] = books
+        }
+
+
+        // 1. Downloads
+        val downloadKeys = getKeys(DOWNLOAD_FOLDER)
+        val downloads = downloadKeys.mapNotNull { getKey<ResultCached>(it) }
+        Log.d("LIBRARY_DEBUG", "Downloads: ${downloads.size} books")
+        result["Downloads"] = downloads
+
+        // 2. History
+        val historyKeys = getKeys(HISTORY_FOLDER)
+        val history = historyKeys.mapNotNull { getKey<ResultCached>(it) }
+        Log.d("LIBRARY_DEBUG", "History: ${history.size} books")
+        result["History"] = history
+
+        Log.d("LIBRARY_DEBUG", "Finished fetching library. Sections: ${result.keys}")
+
+        libraryData = result
+    }
+
+    fun getBookmarkForBook(source: String): String? {
+        libraryData.forEach { (section, books) ->
+            if(section!="History" && section!="Downloads")
+            {
+                books.forEach { book ->
+                    if (book.source == source) {
+                        Log.d("LIBRARY_DEBUG", "Comparing: ${book.source} with $source")
+                        // If the section maps to a ReadType, return it; otherwise null
+                        return friendlyStatus(section)
+                    }
+                }
+            }
+            else if(section!="History"){
+                books.forEach { book ->
+                    if (book.source == source) {
+                        Log.d("LIBRARY_DEBUG", "Comparing: ${book.source} with $source")
+                        // If the section maps to a ReadType, return it; otherwise null
+                        return friendlyStatus(section)
+                    }
+                }
+            }
+        }
+        return null // Not found in library
+    }
+
+
+    fun friendlyStatus(status: String): String {
+        return when (status.uppercase()) {
+            "PLAN_TO_READ" -> "Library"
+            "DROPPED" -> "Dropped"
+            "COMPLETED" -> "Completed"
+            "ON_HOLD" -> "On Hold"
+            "READING" -> "Library"
+            "DOWNLOADS" -> "Library"
+            "HISTORY" -> "History"
+            else -> status // fallback to original if unknown
+        }
+    }
+
+
+
+}

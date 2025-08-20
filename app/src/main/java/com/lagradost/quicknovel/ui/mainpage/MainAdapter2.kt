@@ -101,6 +101,18 @@ class MainAdapter2(
             } else {
                 chapterCountOverlay.isVisible = false
             }
+
+            val InLibrary=item.bookReadStatus
+
+            if(InLibrary != null && InLibrary != "NONE")
+            {
+                libraryOverlay.isVisible = true
+                libraryOverlay.text = "$InLibrary"
+            }
+            else{
+                libraryOverlay.isVisible=false
+            }
+
         }
     }
 

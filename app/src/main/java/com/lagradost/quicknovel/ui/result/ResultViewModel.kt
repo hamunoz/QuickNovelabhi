@@ -2,6 +2,7 @@ package com.lagradost.quicknovel.ui.result
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
@@ -27,7 +28,10 @@ import com.lagradost.quicknovel.EPUB_CURRENT_POSITION_CHAPTER
 import com.lagradost.quicknovel.EPUB_CURRENT_POSITION_READ_AT
 import com.lagradost.quicknovel.EPUB_CURRENT_POSITION_SCROLL_CHAR
 import com.lagradost.quicknovel.HISTORY_FOLDER
+import com.lagradost.quicknovel.LibraryHelper.setLibraryBooks
 import com.lagradost.quicknovel.LoadResponse
+import com.lagradost.quicknovel.MainActivity
+import com.lagradost.quicknovel.MainActivity.Companion
 import com.lagradost.quicknovel.R
 import com.lagradost.quicknovel.RESULT_BOOKMARK
 import com.lagradost.quicknovel.RESULT_BOOKMARK_STATE
@@ -443,6 +447,7 @@ class ResultViewModel : ViewModel() {
             )
             updateBookmarkData()
         }
+        MainActivity.context.setLibraryBooks()
 
         readState.postValue(ReadType.fromSpinner(state))
     }

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
@@ -41,6 +42,7 @@ import com.lagradost.quicknovel.CommonActivity.showToast
 import com.lagradost.quicknovel.CommonActivity.updateLocale
 import com.lagradost.quicknovel.DataStore.getKey
 import com.lagradost.quicknovel.DataStore.getKeys
+import com.lagradost.quicknovel.LibraryHelper.setLibraryBooks
 import com.lagradost.quicknovel.NotificationHelper.requestNotifications
 import com.lagradost.quicknovel.databinding.ActivityMainBinding
 import com.lagradost.quicknovel.databinding.BottomPreviewBinding
@@ -445,6 +447,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         context = applicationContext // ✅ Safe!
+
+        context.setLibraryBooks()
+
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding!!.root)

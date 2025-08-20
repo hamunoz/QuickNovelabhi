@@ -51,6 +51,22 @@
                     android:background="@drawable/overlay_background_rounded"
                     android:text="123 ch"
                     tools:ignore="HardcodedText" />
+            <!-- Library overlay -->
+            <TextView
+                    android:id="@+id/libraryOverlay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|end"
+                    android:layout_margin="6dp"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:background="@drawable/overlay_background_rounded"
+                    android:text="Library"
+                    tools:ignore="HardcodedText" />
         </FrameLayout>
     </androidx.cardview.widget.CardView>
 

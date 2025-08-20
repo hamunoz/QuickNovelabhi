@@ -8,6 +8,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 
+
 private var cachedCookies: String? = null
 private var cachedCsrfToken: String? = null
 
@@ -47,6 +48,8 @@ class WebnovelFanficProvider : MainAPI() {
         cachedCsrfToken = csrfToken
     }
 
+
+
     override suspend fun loadMainPage(
         page: Int,
         mainCategory: String?,
@@ -55,7 +58,6 @@ class WebnovelFanficProvider : MainAPI() {
     ): HeadMainPageResponse {
 
         ensureCookiesLoaded()
-
 
         val slug = tag ?: "fanfic"
         val categoryId = getCategoryIdFromTag(slug)
@@ -93,10 +95,12 @@ class WebnovelFanficProvider : MainAPI() {
 
                 val link = fixUrlNull("$mainUrl/book/$id")
                 val chapterCount=book.optString("chapterNum","0")
+                val BookReadState=LibraryHelper.getBookmarkForBook(link.toString())
 
                 results.add(newSearchResponse(title, link ?: continue) {
                     this.posterUrl = cover;
                     this.totalChapterCount=chapterCount
+                    this.bookReadStatus=BookReadState
                 })
             }
         }
@@ -154,10 +158,14 @@ class WebnovelFanficProvider : MainAPI() {
             val cover = "https://book-pic.webnovel.com/bookcover/$id?imageMogr2/thumbnail/180x|imageMogr2/format/webp|imageMogr2/quality/70!"
             val link = "$mainUrl/book/$id"
             val chapterCount=book.optString("chapterNum","0")
+            val BookReadState=LibraryHelper.getBookmarkForBook(link)
+
+
 
             results.add(newSearchResponse(title, fixUrl(link)) {
                 this.posterUrl = cover;
                 this.totalChapterCount=chapterCount
+                this.bookReadStatus=BookReadState
             })
         }
 

@@ -169,10 +169,13 @@ class MVLEmpyrProvider : MainAPI() {
             val novelCode = (item["novel-code"] as? Number)?.toInt() ?: return@mapNotNull null
             val coverUrl = "https://assets.mvlempyr.app/images/300/${novelCode}.webp"
             val chapterCount=item["total-chapters"].toString()
+            val link=fixUrlNull("/novel/$slug")?: return@mapNotNull null
+            val BookReadState=LibraryHelper.getBookmarkForBook(link)
 
-            newSearchResponse(name, fixUrlNull("/novel/$slug") ?: return@mapNotNull null) {
+            newSearchResponse(name, link) {
                 posterUrl = coverUrl;
                 totalChapterCount=chapterCount
+                this.bookReadStatus=BookReadState
             }
         }
 
@@ -213,10 +216,13 @@ class MVLEmpyrProvider : MainAPI() {
             Log.d("MVLEmpyrProvider", "Search Result: name=$name, slug=$slug")
 
             val url = fixUrlNull("/novel/$slug") ?: return@mapNotNull null
+            val BookReadState=LibraryHelper.getBookmarkForBook(url)
+
             newSearchResponse(name, url) {
                 this.posterUrl = coverUrl
                 this.latestChapter = chapterCount
                 this.totalChapterCount=chapterCount
+                this.bookReadStatus=BookReadState
             }
         }
     }
