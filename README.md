@@ -33,6 +33,8 @@ Adfree FOSS Android app for downloading novels. It also functions as an Epub rea
 **New Provider added:** 
 - https://www.mvlempyr.com
 - https://www.webnovel.com/stories/fanfic
+- https://novelfire.net
+- https://www.wuxiabox.com
 
 **Screenshoots:**
 

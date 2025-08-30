@@ -134,7 +134,7 @@ class MVLEmpyrProvider : MainAPI() {
             fullNovelList = parseJsonArray(response)
             saveFullNovelListCache(fullNovelList)
         }
-        Log.d("MVLEmpyrProvider","${fullNovelList.size}")
+        //Log.d("MVLEmpyrProvider","${fullNovelList.size}")
     }
 
 
@@ -150,7 +150,6 @@ class MVLEmpyrProvider : MainAPI() {
         // Fetch only once when fullNovelList is empty
         ensureFullNovelListLoaded();
 
-        Log.d("MVLEmpyrProvider", "Paginating locally: page=$page, orderBy=$orderBy")
 
         val sortedItems = when (orderBy) {
             "new" -> fullNovelList.sortedByDescending { it["createdOn"] as? String }
@@ -170,12 +169,10 @@ class MVLEmpyrProvider : MainAPI() {
             val coverUrl = "https://assets.mvlempyr.app/images/300/${novelCode}.webp"
             val chapterCount=item["total-chapters"].toString()
             val link=fixUrlNull("/novel/$slug")?: return@mapNotNull null
-            val BookReadState=LibraryHelper.getBookmarkForBook(link)
 
             newSearchResponse(name, link) {
                 posterUrl = coverUrl;
                 totalChapterCount=chapterCount
-                this.bookReadStatus=BookReadState
             }
         }
 
@@ -184,7 +181,7 @@ class MVLEmpyrProvider : MainAPI() {
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
-        Log.d("MVLEmpyrProvider", "Searching for: $query")
+        //Log.d("MVLEmpyrProvider", "Searching for: $query")
 
         ensureFullNovelListLoaded()
 
@@ -213,16 +210,14 @@ class MVLEmpyrProvider : MainAPI() {
             val coverUrl = "https://assets.mvlempyr.app/images/300/${novelCode}.webp"
             val chapterCount=item["total-chapters"].toString()
 
-            Log.d("MVLEmpyrProvider", "Search Result: name=$name, slug=$slug")
+            //Log.d("MVLEmpyrProvider", "Search Result: name=$name, slug=$slug")
 
             val url = fixUrlNull("/novel/$slug") ?: return@mapNotNull null
-            val BookReadState=LibraryHelper.getBookmarkForBook(url)
 
             newSearchResponse(name, url) {
                 this.posterUrl = coverUrl
                 this.latestChapter = chapterCount
                 this.totalChapterCount=chapterCount
-                this.bookReadStatus=BookReadState
             }
         }
     }
@@ -250,7 +245,7 @@ class MVLEmpyrProvider : MainAPI() {
         val tag = calculateTag(novelCode)
 
 
-        Log.d("MVLEmpyrProvider", "${totalChapters}")
+        //Log.d("MVLEmpyrProvider", "${totalChapters}")
 
         // ====================== Check Latest Chapter Date ========================
         val latestChapterApiUrl = "$chapterNamesApiUrl" + "tags=$tag&per_page=1&page=1"
@@ -262,7 +257,7 @@ class MVLEmpyrProvider : MainAPI() {
 
         if (cachedDate != null && latestChapterDate != null && cachedDate == latestChapterDate && cachedChapters != null) {
             // Cache is valid, no updates detected
-            Log.d("MVLEmpyrProvider", "No updates. Loaded chapters from cache for novelCode=$novelCode")
+            //Log.d("MVLEmpyrProvider", "No updates. Loaded chapters from cache for novelCode=$novelCode")
             return newStreamResponse(name, fixUrl(url), cachedChapters) {
                 this.author = author
                 this.posterUrl = poster
@@ -282,7 +277,7 @@ class MVLEmpyrProvider : MainAPI() {
 
         while (!fetchedAll) {
             val chaptersApiUrl = chapterNamesApiUrl+"tags=$tag&per_page=$perPage&page=$currentPage"
-            Log.d("MVLEmpyrProvider", "Fetching chapters page $currentPage")
+            //Log.d("MVLEmpyrProvider", "Fetching chapters page $currentPage")
             val apiResponse = app.get(chaptersApiUrl).parsed<List<Map<String, Any>>>()
 
             if (apiResponse.isEmpty()) {
@@ -321,7 +316,7 @@ class MVLEmpyrProvider : MainAPI() {
 
         // =================== SAVE TO CACHE ==========================
         chapterListCache[novelCode] = chapters
-        Log.d("MVLEmpyrProvider", "Chapters cached for novelCode=$novelCode")
+        //Log.d("MVLEmpyrProvider", "Chapters cached for novelCode=$novelCode")
         // ============================================================
 
         return newStreamResponse(name,fixUrl(url), chapters) {
@@ -337,13 +332,13 @@ class MVLEmpyrProvider : MainAPI() {
     override suspend fun loadHtml(url: String): String? {
 
         chapterContentCache[url]?.let {
-            Log.d("MVLEmpyrProvider", "Loaded chapter content from cache for $url")
+            //Log.d("MVLEmpyrProvider", "Loaded chapter content from cache for $url")
             return it
         }
 
 
         val fullUrl = fixUrl(url)
-        Log.d("MVLEmpyrProvider", "Loading Chapter HTML from URL: $fullUrl")
+        //Log.d("MVLEmpyrProvider", "Loading Chapter HTML from URL: $fullUrl")
 
         try {
             val document = app.get(fullUrl).document
@@ -351,7 +346,7 @@ class MVLEmpyrProvider : MainAPI() {
             val content = ContentElement?.html()
 
             if (content != null) {
-                Log.d("MVLEmpyrProvider", "Chapter Content Loaded Successfully from Primary URL")
+               // Log.d("MVLEmpyrProvider", "Chapter Content Loaded Successfully from Primary URL")
                 chapterContentCache[url] = content
                 return content
             } else {

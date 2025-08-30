@@ -1,7 +1,6 @@
 package com.lagradost.quicknovel
 
 import android.content.Context
-import android.hardware.biometrics.BiometricManager.Strings
 import android.util.Log
 import com.lagradost.quicknovel.DataStore.getKey
 import com.lagradost.quicknovel.DataStore.getKeys
@@ -59,13 +58,13 @@ object LibraryHelper {
         libraryData = result
     }
 
-    fun getBookmarkForBook(source: String): String? {
+    fun getBookmarkForBook(title: String): String? {
         libraryData.forEach { (section, books) ->
             if(section!="History" && section!="Downloads")
             {
                 books.forEach { book ->
-                    if (book.source == source) {
-                        Log.d("LIBRARY_DEBUG", "Comparing: ${book.source} with $source")
+                    if (book.name.equals(title, ignoreCase = true)) {
+                        Log.d("LIBRARY_DEBUG", "Comparing: ${book.name} with $title")
                         // If the section maps to a ReadType, return it; otherwise null
                         return friendlyStatus(section)
                     }
@@ -73,8 +72,8 @@ object LibraryHelper {
             }
             else if(section!="History"){
                 books.forEach { book ->
-                    if (book.source == source) {
-                        Log.d("LIBRARY_DEBUG", "Comparing: ${book.source} with $source")
+                    if (book.name.equals(title, ignoreCase = true)) {
+                        Log.d("LIBRARY_DEBUG", "Comparing: ${book.name} with $title")
                         // If the section maps to a ReadType, return it; otherwise null
                         return friendlyStatus(section)
                     }

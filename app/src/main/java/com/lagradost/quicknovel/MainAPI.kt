@@ -194,9 +194,9 @@ fun MainAPI.newSearchResponse(
     url: String,
     fix: Boolean = true,
     chapterCount: String? = null,
-    myReadStatus: String?=null,
     initializer: SearchResponse.() -> Unit = { },
 ): SearchResponse {
+    val myReadStatus=LibraryHelper.getBookmarkForBook(name)
     val builder =
         SearchResponse(name = name, url = if (fix) fixUrl(url) else url, apiName = this.name, totalChapterCount = chapterCount, bookReadStatus = myReadStatus)
     builder.initializer()

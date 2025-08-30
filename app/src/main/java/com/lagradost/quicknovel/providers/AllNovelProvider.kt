@@ -105,7 +105,6 @@ open class AllNovelProvider : MainAPI() {
             if (orderBy == "" && tag != "All") "$mainUrl/genre/$tag?page=$page" else "$mainUrl/${if (orderBy.isNullOrBlank()) "hot-novel" else orderBy}?page=$page"
         val document = app.get(url).document
 
-
         return HeadMainPageResponse(
             url,
             list = document.select("div.list>div.row").mapNotNull { element ->

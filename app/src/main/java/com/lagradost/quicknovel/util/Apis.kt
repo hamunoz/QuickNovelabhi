@@ -23,6 +23,7 @@ import com.lagradost.quicknovel.providers.MeioNovelProvider
 import com.lagradost.quicknovel.providers.MoreNovelProvider
 import com.lagradost.quicknovel.providers.MtlNovelProvider
 import com.lagradost.quicknovel.providers.NovelBinProvider
+import com.lagradost.quicknovel.providers.NovelFireProvider
 import com.lagradost.quicknovel.providers.NovelFullProvider
 import com.lagradost.quicknovel.providers.NovelsOnlineProvider
 import com.lagradost.quicknovel.providers.PawReadProver
@@ -34,6 +35,7 @@ import com.lagradost.quicknovel.providers.SakuraNovelProvider
 import com.lagradost.quicknovel.providers.ScribblehubProvider
 import com.lagradost.quicknovel.providers.WebnovelFanficProvider
 import com.lagradost.quicknovel.providers.WtrLabProvider
+import com.lagradost.quicknovel.providers.WuxiaBoxProvider
 import com.lagradost.quicknovel.util.Coroutines.ioSafe
 
 class Apis {
@@ -81,7 +83,9 @@ class Apis {
             WtrLabProvider(),
             PawReadProver(),
             MVLEmpyrProvider(),
-            WebnovelFanficProvider()
+            WebnovelFanficProvider(),
+            NovelFireProvider(),
+            WuxiaBoxProvider()
         ).sortedBy { it.name }
 
         fun getApiFromName(name: String): APIRepository {

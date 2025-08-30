@@ -1428,11 +1428,14 @@ open class ReadfromnetProvider : MainAPI() {
                     override fun onPageFinished(view: WebView?, finishedUrl: String?) {
                         if (isResumed.get()) return
 
-                        // Save any updated cookie for future reuse
-                        val newCookie = cookieManager.getCookie(mainUrl)
-                        if (!newCookie.isNullOrBlank()) {
-                            GrayCitySessionProvider.saveSessionCookie(MainActivity.context, newCookie)
-                            Log.d("GrayCity", "Saved updated cookie: $newCookie")
+                        if (savedCookie.isNullOrBlank())
+                        {
+                            // Save any updated cookie for future reuse
+                            val newCookie = cookieManager.getCookie(mainUrl)
+                            if (!newCookie.isNullOrBlank() && newCookie.contains("PHPSESSID")) {
+                                GrayCitySessionProvider.saveSessionCookie(MainActivity.context, newCookie)
+                                Log.d("GrayCity", "Saved updated cookie: $newCookie")
+                            }
                         }
 
                         view?.evaluateJavascript(

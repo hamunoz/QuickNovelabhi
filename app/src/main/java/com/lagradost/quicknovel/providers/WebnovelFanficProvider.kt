@@ -76,9 +76,6 @@ class WebnovelFanficProvider : MainAPI() {
         val response = client.newCall(request).execute()
         val body = response.body?.string() ?: throw ErrorLoadingException("Empty response")
 
-        Log.d(" URL","${apiUrl}")
-        Log.d(" Result","${body}")
-
         val json = JSONObject(body)
         val results = mutableListOf<SearchResponse>()
 
@@ -95,12 +92,10 @@ class WebnovelFanficProvider : MainAPI() {
 
                 val link = fixUrlNull("$mainUrl/book/$id")
                 val chapterCount=book.optString("chapterNum","0")
-                val BookReadState=LibraryHelper.getBookmarkForBook(link.toString())
 
                 results.add(newSearchResponse(title, link ?: continue) {
                     this.posterUrl = cover;
                     this.totalChapterCount=chapterCount
-                    this.bookReadStatus=BookReadState
                 })
             }
         }
@@ -142,9 +137,6 @@ class WebnovelFanficProvider : MainAPI() {
         val response = OkHttpClient().newCall(request).execute()
         val body = response.body?.string() ?: return Pair(emptyList(), true)
 
-        Log.d("Search URL","${url}")
-        Log.d("Search Result","${body}")
-
         val json = JSONObject(body)
         val data = json.optJSONObject("data") ?: return Pair(emptyList(), true)
         val fanficData = data.optJSONObject("fanficBookInfo") ?: return Pair(emptyList(), true)
@@ -158,14 +150,12 @@ class WebnovelFanficProvider : MainAPI() {
             val cover = "https://book-pic.webnovel.com/bookcover/$id?imageMogr2/thumbnail/180x|imageMogr2/format/webp|imageMogr2/quality/70!"
             val link = "$mainUrl/book/$id"
             val chapterCount=book.optString("chapterNum","0")
-            val BookReadState=LibraryHelper.getBookmarkForBook(link)
 
 
 
             results.add(newSearchResponse(title, fixUrl(link)) {
                 this.posterUrl = cover;
                 this.totalChapterCount=chapterCount
-                this.bookReadStatus=BookReadState
             })
         }
 
@@ -207,7 +197,6 @@ class WebnovelFanficProvider : MainAPI() {
             else -> "paused"
         }
 
-        // ✅ Scrape chapter list from mobile catalog page
         val catalogUrl = "$mainUrl/book/$bookId/catalog"
         val catalogRequest = Request.Builder()
             .url(catalogUrl)
