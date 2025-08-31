@@ -15,6 +15,7 @@ data class ResultCached(
     val totalChapters : Int,
     val cachedTime : Long, // milliseconds
     val synopsis : String? = null
+    val lastChapterReadTitle: String? = null
 ) {
     val image : UiImage? get() = img(poster)
 
