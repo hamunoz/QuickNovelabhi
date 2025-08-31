@@ -118,7 +118,7 @@ class MainAdapter2(
                         if(chapterCount==0){
                             chapterCountOverlay.isVisible = false
                         }
-                        "$chapterCountStr ch" // fallback to string like "V5 46"
+                        "$chapterCountStr" // fallback to string like "V5 46"
                     }
                 } else {
                     chapterCountOverlay.isVisible = false
