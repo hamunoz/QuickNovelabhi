@@ -34,7 +34,7 @@ class HistoryAdapter2(private val viewModel: HistoryViewModel) :
             binding.apply {
                 imageText.text = card.name
                 //historyExtraText.text = "${card.totalChapters} Chapters"
-                historyExtraText.text = "${card.totalChapters} Chapters (Last Read: ${card.lastReadName ?: "-"} [#${card.currentChapter ?: "-"}])"
+                historyExtraText.text = "${card.totalChapters} Chapters (Last Read: ${card.lastChapterReadTitle ?: "-"} [#${card.lastChapterRead ?: "-"}])"
                 imageView.setImage(card.poster)
 
                 historyPlay.setOnClickListener {
