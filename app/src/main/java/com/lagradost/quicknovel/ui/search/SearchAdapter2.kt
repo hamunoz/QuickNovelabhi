@@ -86,7 +86,7 @@ class SearchAdapter2(
 
                         chapterCountOverlay.isVisible = true
                         chapterCountOverlay.text = if (chapterCount != null && chapterCount > 0) {
-                            "$chapterCount ch"
+                            "$chapterCount"
                         }
                         else {
                             if(chapterCount==0){
